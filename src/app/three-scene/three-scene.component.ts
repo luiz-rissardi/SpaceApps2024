@@ -15,16 +15,16 @@ export class ThreeSceneComponent implements OnInit {
   private camera!: THREE.PerspectiveCamera;
   private renderer!: THREE.WebGLRenderer | null;
   private controls!: OrbitControls;
-  private earth!: THREE.Mesh;
+  private mercury!: THREE.Mesh;
   private sun!: THREE.Mesh;
-  private orbit!: THREE.Line; // Adicionado para representar a órbita
+  private orbit!: THREE.Line;
   private textureLoader!: THREE.TextureLoader;
 
   ngOnInit() {
     this.initScene();
     this.initSun();
-    this.initEarth();
-    this.initOrbit(); // Inicializa a órbita da Terra
+    this.initMercury(); // Agora estamos inicializando Mercúrio
+    this.initOrbit(); // Inicializa a órbita de Mercúrio
     this.checkWebGLSupportAndStart();
   }
 
@@ -33,50 +33,60 @@ export class ThreeSceneComponent implements OnInit {
     this.textureLoader = new THREE.TextureLoader();
     this.camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 1000000);
     this.camera.position.z = 10000;
-    // this.camera.position.x = 1000;
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 2); // Cor branca, intensidade 2
+    const ambientLight = new THREE.AmbientLight(0xffffff, 2);
     this.scene.add(ambientLight);
   }
 
   initSun() {
-    const sunGeometry = new THREE.SphereGeometry(1000, 1000, 1000);
+    const sunGeometry = new THREE.SphereGeometry(100, 1000, 1000);
     const sunMaterial = new THREE.MeshBasicMaterial({ color: "yellow" });
     this.sun = new THREE.Mesh(sunGeometry, sunMaterial);
     this.scene.add(this.sun);
   }
 
-  initEarth() {
-    // so mudando os dados 
-    const dataEarth = {
-      lambda: 15,
-      phi: 1,
-      rho: 1 
-    }
+  initMercury() {
+    const mercuryData = {
+      a: 0.38709843,      // Semieixo maior em AU
+      e: 0.20563661,      // Excentricidade
+      I: 7.00559432,      // Inclinação em graus
+      L: 252.25166724,    // Longitude média
+      longPeri: 77.45771895, // Longitude do periélio
+      longNode: 48.33961819, // Longitude do nodo ascendente
+      rho: 6              // Distância em AU ajustada para o sistema
+    };
+
     const material = new THREE.MeshBasicMaterial({
-      color: "blue"
+      color: "gray"
     });
     const geometry = new THREE.SphereGeometry(100, 100, 100);
-    this.earth = new THREE.Mesh(geometry, material);
-    this.earth.position.copy(this.calculate3DPosition(dataEarth));
-    this.scene.add(this.earth);
-    this.initOrbit()
+    this.mercury = new THREE.Mesh(geometry, material);
+    this.mercury.position.copy(this.calculateOrbitalPosition(mercuryData));
+    this.scene.add(this.mercury);
+    this.initOrbit();
   }
 
   initOrbit() {
-    const radius = 6 * 1000; // Raio da órbita da Terra
+    const mercuryData = {
+      a: 0.38709843, // Semieixo maior de Mercúrio ajustado para a escala
+      e: 0.20563661, // Excentricidade
+      I: 7.00559432  // Inclinação
+    };
+
     const points = [];
 
+    // Gera pontos da órbita com excentricidade
     for (let i = 0; i <= 64; i++) {
       const theta = (i / 64) * Math.PI * 2;
-      points.push(new THREE.Vector3(Math.cos(theta) * radius, Math.sin(theta) * radius, 0)); // Mantendo Z fixo
+      const r = this.calculateEllipticalRadius(mercuryData.a, mercuryData.e, theta); // Raio elíptico
+      points.push(new THREE.Vector3(Math.cos(theta) * r * 1000, Math.sin(theta) * r * 1000, 0)); // Mantendo Z fixo
     }
+
     const orbitGeometry = new THREE.BufferGeometry().setFromPoints(points);
 
-    // Define o material da linha (não tracejada)
     const orbitMaterial = new THREE.LineBasicMaterial({
-      color: 0xffffff, // Cor da linha
-      linewidth: 2 // Largura da linha
+      color: 0xffffff,
+      linewidth: 2
     });
 
     const orbitLine = new THREE.Line(orbitGeometry, orbitMaterial);
@@ -84,17 +94,16 @@ export class ThreeSceneComponent implements OnInit {
   }
 
   checkWebGLSupportAndStart() {
-    // Verifica suporte ao WebGL
     if (this.isWebGLAvailable()) {
       this.renderer = new THREE.WebGLRenderer({ canvas: this.canvasRef.nativeElement });
       this.renderer.setSize(window.innerWidth, window.innerHeight);
 
       this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-      this.controls.enableDamping = true; // Efeito de suavização para a rotação
-      this.controls.dampingFactor = 0.05; // Fator de amortecimento
-      this.controls.screenSpacePanning = false; // Não permite que a câmera se mova na tela
-      this.controls.maxPolarAngle = Math.PI; // Permite rotação total até 180 graus no eixo vertical
-      this.controls.enableZoom = true; // Permitir zoom
+      this.controls.enableDamping = true;
+      this.controls.dampingFactor = 0.05;
+      this.controls.screenSpacePanning = false;
+      this.controls.maxPolarAngle = Math.PI;
+      this.controls.enableZoom = true;
       this.controls.enablePan = false;
 
       this.startRendering();
@@ -117,33 +126,48 @@ export class ThreeSceneComponent implements OnInit {
     const animate = () => {
       requestAnimationFrame(animate);
 
-      // Atualiza a posição da Terra com base no tempo
-      const position = this.calculate3DPosition({
-        lambda: 15 + t * (360 / 365), // Simula a revolução da Terra ao longo do ano
-        phi: 1,
-        rho: 1 // 6 * 1000 km
+      // Atualiza a posição de Mercúrio com base no tempo
+      const position = this.calculateOrbitalPosition({
+        a: 0.38709843, // Semieixo maior de Mercúrio
+        e: 0.20563661, // Excentricidade
+        I: 7.00559432, // Inclinação
+        L: 252.25166724 + t, // Simula o movimento ao longo do tempo
+        longPeri: 77.45771895,
+        longNode: 48.33961819,
+        rho: 6
       });
 
-      this.earth.position.copy(position);
+      this.mercury.position.copy(position);
       this.controls.update();
       this.renderer?.render(this.scene, this.camera);
 
-      t += 1000; // Incrementar o tempo
+      t += 0.1; // Incremento de tempo
     };
     animate();
   }
 
-  private calculate3DPosition(data: { lambda: number; phi: number; rho: number }) {
+  // Cálculo do raio da órbita elíptica
+  private calculateEllipticalRadius(a: number, e: number, theta: number): number {
+    return (a * (1 - e * e)) / (1 + e * Math.cos(theta));
+  }
 
-    const lambdaRad = this.arcsecondsToRadians(data.lambda);
-    const phiRad = this.arcsecondsToRadians(data.phi);
-    const rhoKm = data.rho * 1000; // Convertendo para km
+  // Cálculo da posição 3D de Mercúrio
+  private calculateOrbitalPosition(data: { a: number; e: number; I: number; L: number; longPeri: number; longNode: number; rho: number }) {
+    const theta = this.arcsecondsToRadians(data.L); // Ângulo atual ao longo da órbita
+    const r = this.calculateEllipticalRadius(data.a, data.e, theta); // Distância ao longo da órbita
 
-    const x = rhoKm * Math.cos(phiRad) * Math.cos(lambdaRad);
-    const y = rhoKm * Math.cos(phiRad) * Math.sin(lambdaRad);
-    const z = rhoKm * Math.sin(phiRad);
+    // Inclinação e outros ajustes para o plano de Mercúrio
+    const inclinationRad = this.arcsecondsToRadians(data.I);
+    const nodeRad = this.arcsecondsToRadians(data.longNode);
+    const periRad = this.arcsecondsToRadians(data.longPeri);
 
-    return new THREE.Vector3(x, y, z);
+    const x = r * Math.cos(theta + periRad);
+    const y = r * Math.sin(theta + periRad);
+
+    const rotatedX = x * Math.cos(inclinationRad) - y * Math.sin(inclinationRad);
+    const rotatedY = x * Math.sin(inclinationRad) + y * Math.cos(inclinationRad);
+
+    return new THREE.Vector3(rotatedX * 1000, rotatedY * 1000, 0);
   }
 
   private arcsecondsToRadians(arcseconds: number) {
