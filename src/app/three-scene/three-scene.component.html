@@ -1,11 +1,27 @@
 <canvas #canvas></canvas>
 
+@for (planet of this.planetOrbitalData; track $index) {
+
+<app-planet 
+[keplerianData]="planet" 
+[planetColor]="planet.color()"
+[planetLabel]="planet.label"
+[planetSize]="planet.size()"
+[scene]="this.scene"
+[camera]="this.camera">
+</app-planet>
+
+}
+
+
+<!-- 
 <app-planet 
 [keplerianData]="this.planetOrbitalData[0]"
 [planetColor]="'gray'"
 [planetLabel]="'MERCURY'"
 [planetSize]="50"
 [scene]="this.scene"
+[camera]="this.camera"
 >
 </app-planet>
 <app-planet 
@@ -14,6 +30,7 @@
 [planetColor]="'crimson'"
 [planetSize]="60"
 [scene]="this.scene"
+[camera]="this.camera"
 >
 </app-planet>
 <app-planet 
@@ -22,6 +39,7 @@
 [planetColor]="'blue'"
 [planetSize]="70"
 [scene]="this.scene"
+[camera]="this.camera"
 >
 </app-planet>
 <app-planet 
@@ -30,22 +48,25 @@
 [planetColor]="'orange'"
 [planetSize]="70"
 [scene]="this.scene"
+[camera]="this.camera"
 >
 </app-planet>
 <app-planet 
 [keplerianData]="this.planetOrbitalData[4]"
 [planetLabel]="'JUPITER'"
-[planetSize]="500"
+[planetSize]="400"
 [planetColor]="'brown'"
 [scene]="this.scene"
+[camera]="this.camera"
 >
 </app-planet>
 <app-planet 
 [keplerianData]="this.planetOrbitalData[5]"
 [planetLabel]="'SATURN'"
-[planetSize]="450"
+[planetSize]="350"
 [planetColor]="'beige'"
 [scene]="this.scene"
+[camera]="this.camera"
 >
 </app-planet>
 <app-planet 
@@ -54,6 +75,7 @@
 [planetSize]="450"
 [planetColor]="'cadetblue'"
 [scene]="this.scene"
+[camera]="this.camera"
 >
 </app-planet>
 <app-planet 
@@ -62,5 +84,6 @@
 [planetLabel]="'NEPTUNE'"
 [planetColor]="'darkslategray'"
 [scene]="this.scene"
+[camera]="this.camera"
 >
-</app-planet>
+</app-planet> -->
