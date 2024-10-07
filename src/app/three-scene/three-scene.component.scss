@@ -4,3 +4,109 @@ canvas {
     height: 100%;
     // color:darkslategray ;
 }
+
+@mixin breakPoint($point) {
+    @if($point == mobile-only) {
+        @media screen and (max-width:600px) {
+            @content;
+        }
+    }
+}
+
+.controlls{
+    position: absolute;
+    padding: 10px;
+    top: 80%;
+    width: 40%;
+    display: flex;
+    text-align: center;
+    flex-direction: column;
+    background-color: rgba(128, 128, 128, 0.13);
+    left: 30%;
+    color: white;
+
+    @include breakPoint(mobile-only){
+        width: 80%;
+        left: 10%;
+        top: 70%;
+    }
+}
+
+.line{
+    width: 100%;
+    height: 2px;
+}
+
+.filters{
+    width: 200px;
+    height: auto;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    background-color: transparent;
+    border: 1px solid white;
+    position: absolute;
+    color: white;
+    left: 0%;
+    top: 0%;
+}
+
+/* Estilo base para o input de tipo range */
+input[type="range"] {
+    -webkit-appearance: none; /* Remove a aparência padrão no Chrome e Safari */
+    appearance: none;
+    background: transparent; /* Torna a linha do range transparente */
+  }
+  
+  /* Estilo da faixa (track) do range */
+  input[type="range"]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 2px; /* Altura da faixa, pode ser ajustada */
+    background: white; /* Deixa a faixa invisível */
+    border: none;
+  }
+  
+  input[type="range"]::-moz-range-track {
+    width: 100%;
+    height: 8px;
+    background: transparent;
+    border: none;
+  }
+  
+  input[type="range"]::-ms-track {
+    width: 100%;
+    height: 8px;
+    background: transparent;
+    border: none;
+    color: transparent; /* Oculta o track */
+  }
+  
+  /* Estilo do thumb (bolinha) */
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    margin-top: -10px;
+    height: 20px;
+    border-radius: 50%; /* Faz o thumb redondo */
+    background: rgb(44, 44, 72); /* Cor da bolinha */
+    cursor: pointer;
+  }
+  
+  input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: blue;
+    cursor: pointer;
+  }
+  
+  input[type="range"]::-ms-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: blue;
+    cursor: pointer;
+  }
+  

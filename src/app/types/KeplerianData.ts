@@ -14,3 +14,17 @@ export type KeplerianData = {
     size:WritableSignal<any>;
     label:string
 }
+
+export type KeplerianObjectData ={
+    id: number;
+    label: string;
+    a: number;
+    e: number;
+    I:number;
+    longPeri: number;
+    longNode: number;
+    n: number;
+    L: number;
+    t: number |  null;
+    pHAs: boolean;
+}

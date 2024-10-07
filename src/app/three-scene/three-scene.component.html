@@ -2,88 +2,64 @@
 
 @for (planet of this.planetOrbitalData; track $index) {
 
-<app-planet 
-[keplerianData]="planet" 
-[planetColor]="planet.color()"
-[planetLabel]="planet.label"
-[planetSize]="planet.size()"
-[scene]="this.scene"
-[camera]="this.camera">
+<app-planet [isShowLabel]="this.showLabels" [isShow]="this.showPlanets" [keplerianData]="planet" [dateCurrent]="this.dateTarget" [planetColor]="planet.color()" [scene]="this.scene"
+    [camera]="this.camera" [monthAmmount]="this.monthAmmout()">
 </app-planet>
 
 }
 
 
-<!-- 
-<app-planet 
-[keplerianData]="this.planetOrbitalData[0]"
-[planetColor]="'gray'"
-[planetLabel]="'MERCURY'"
-[planetSize]="50"
-[scene]="this.scene"
-[camera]="this.camera"
->
-</app-planet>
-<app-planet 
-[keplerianData]="this.planetOrbitalData[1]"
-[planetLabel]="'VENUS'"
-[planetColor]="'crimson'"
-[planetSize]="60"
-[scene]="this.scene"
-[camera]="this.camera"
->
-</app-planet>
-<app-planet 
-[keplerianData]="this.planetOrbitalData[2]"
-[planetLabel]="'EARTH'"
-[planetColor]="'blue'"
-[planetSize]="70"
-[scene]="this.scene"
-[camera]="this.camera"
->
-</app-planet>
-<app-planet 
-[keplerianData]="this.planetOrbitalData[3]"
-[planetLabel]="'MARS'"
-[planetColor]="'orange'"
-[planetSize]="70"
-[scene]="this.scene"
-[camera]="this.camera"
->
-</app-planet>
-<app-planet 
-[keplerianData]="this.planetOrbitalData[4]"
-[planetLabel]="'JUPITER'"
-[planetSize]="400"
-[planetColor]="'brown'"
-[scene]="this.scene"
-[camera]="this.camera"
->
-</app-planet>
-<app-planet 
-[keplerianData]="this.planetOrbitalData[5]"
-[planetLabel]="'SATURN'"
-[planetSize]="350"
-[planetColor]="'beige'"
-[scene]="this.scene"
-[camera]="this.camera"
->
-</app-planet>
-<app-planet 
-[keplerianData]="this.planetOrbitalData[6]"
-[planetLabel]="'URANUS'"
-[planetSize]="450"
-[planetColor]="'cadetblue'"
-[scene]="this.scene"
-[camera]="this.camera"
->
-</app-planet>
-<app-planet 
-[keplerianData]="this.planetOrbitalData[7]"
-[planetSize]="400"
-[planetLabel]="'NEPTUNE'"
-[planetColor]="'darkslategray'"
-[scene]="this.scene"
-[camera]="this.camera"
->
-</app-planet> -->
+@for (asteroid of this.asteroidsData; track $index) {
+<app-body-spaces [isshowAsteroidesPHA]="this.showAsteroidesPHA" [isShowLabel]="this.showLabels" [isShow]="this.showAsteroides" [objectData]="asteroid" [monthAmmount]="this.monthAmmout()" [scene]="this.scene"
+    [camera]="this.camera">
+
+</app-body-spaces>
+}
+
+
+@for (satelite of this.sateliteData; track $index) {
+<app-body-spaces [isShowLabel]="this.showLabels"  [isShow]="this.showSatelites" [objectData]="satelite" [objectColor]="'rgb(255, 0, 225)'" [monthAmmount]="this.monthAmmout()"
+    [scene]="this.scene" [camera]="this.camera">
+
+</app-body-spaces>
+}
+
+
+<section class="controlls py-3">
+    <p>{{ dateTarget() | date: 'MMM dd yyyy' }}</p>
+    <div class="d-flex">
+        <span class="me-auto"> ← back time (intesity @if(this.monthAmmout() < 0 ) { {{this.monthAmmout()}} months/sec }
+                ) </span>
+                <span class="mx-auto"> stop animation </span>
+                <span class="ms-auto"> (intesity
+                    @if(this.monthAmmout() > 0 ) { {{this.monthAmmout()}} months/sec }
+                    ) previus time → </span>
+    </div>
+    <input type="range" (change)="this.ChangePerTime($event)" min="-5" max="5" step="1" value="0" class="mt-2">
+</section>
+
+<section class="filters">
+    <h2>Filters</h2>
+
+    <div>
+        <label for="asteroids"> show asteroids </label>
+        <input class="m-4" (click)="this.showAsteroides.set(!this.showAsteroides())" checked type="checkbox" id="asteroids">
+    </div>
+    <div>
+        <label for="satelites"> show satelites </label>
+        <input class="m-4" (click)="this.showSatelites.set(!this.showSatelites())" checked type="checkbox" id="satelites">
+    </div>
+    <div>
+        <label for="labels"> show labels </label>
+        <input class="m-4" (click)="this.showLabels.set(!this.showLabels())" checked type="checkbox" id="labels">
+    </div>
+    <div>
+        <label for="planets"> show planets </label>
+        <input class="m-4" (click)="this.showPlanets.set(!this.showPlanets())" checked type="checkbox" id="planets">
+    </div>
+
+    <div>
+        <label for="PHA"> show PHA </label>
+        <input class="m-4" (click)="this.showAsteroidesPHA.set(!this.showAsteroidesPHA())" type="checkbox" id="PHA">
+    </div>
+</section>
