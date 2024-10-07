@@ -50,6 +50,18 @@ canvas {
     color: white;
     left: 0%;
     top: 0%;
+
+    @include breakPoint(mobile-only){
+        width: 100%;
+        height: 20vh;
+        padding: 0;
+
+        h2{
+            width: 100%;
+            display: block;
+        }
+
+    }
 }
 
 /* Estilo base para o input de tipo range */
