@@ -2,7 +2,7 @@ import { AfterViewInit, Component, effect, input, WritableSignal } from '@angula
 import * as THREE from "three";
 import { KeplerianData } from '../../types/KeplerianData';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
-import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 
 
 @Component({

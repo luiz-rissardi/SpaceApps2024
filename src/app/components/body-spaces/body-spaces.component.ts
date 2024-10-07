@@ -2,7 +2,7 @@ import { Component, effect, input, WritableSignal } from '@angular/core';
 import * as THREE from "three";
 import { KeplerianObjectData } from '../../types/KeplerianData';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
-import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 
 @Component({
   selector: 'app-body-spaces',
